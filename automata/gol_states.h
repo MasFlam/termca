@@ -1,0 +1,2 @@
+STATE(DEAD,  '.', RGB( 48,  48,  48))
+STATE(ALIVE, 'X', RGB(255, 255, 255))
