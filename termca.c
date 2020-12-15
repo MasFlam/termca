@@ -6,6 +6,8 @@
 #include <string.h>
 #include <time.h>
 
+#define MAX_SAVE_FILENAME_LEN 255
+
 #define RGB(r, g, b) (((r) << 16) | ((g) << 8) | (b))
 
 typedef enum {
@@ -104,10 +106,83 @@ static inline void visualize(FILE *infp) {
 	free(newGrid);
 }
 
+static inline void saveGridToFile(FILE *ofp, State *grid, size_t width, size_t height) {
+	fprintf(ofp, "%zu %zu\n", width-2, height-2);
+	for (size_t y = 1; y < height-1; ++y) {
+		for (size_t x = 1; x < width-1; ++x) {
+			fprintf(ofp, " %d", grid[y*width + x]);
+		}
+		fputc('\n', ofp);
+	}
+}
+
+static inline void doEditor() {
+	size_t width, height;
+	
+	printf(
+		"\x1b[3J\x1b[;f" "\n"
+		"Enter the grid width: "
+	);
+	scanf(" %zu", &width);
+	printf("\nEnter the grid height: ");
+	scanf(" %zu", &height);
+	width += 2;
+	height += 2;
+	
+	State *grid = calloc(width * height, sizeof(State));
+	
+	while (true) {
+		printf("\x1b[3J\x1b[;f");
+		displayGrid(grid, width, height);
+		printf(
+			":x,y - change cell at (x,y) (0-based)" "\n"
+			".filename - save grid to filename (max %d characters)" "\n"
+			"q - quit (remember to save firt!)" "\n",
+			MAX_SAVE_FILENAME_LEN
+		);
+		
+		int ch = getchar();
+		if (ch == ':') {
+			size_t x, y;
+			scanf("%zu,%zu", &x, &y);
+			printf("Chose cell state: (Enter the number)\n");
+			#define STATE(name, symbol, _) \
+				printf( \
+					"\x1b[38;2;%d;%d;%dm(%d, %c)\x1b[39m %s\n", \
+					color[name] >> 16, \
+					color[name] >> 8, \
+					color[name], \
+					name, symbol, \
+					#name \
+				);
+			#include "states.h"
+			#undef STATE
+			int state;
+			scanf(" %d", &state);
+			grid[(y+1)*width + (x+1)] = state;
+		} else if (ch == '.') {
+			char filename[MAX_SAVE_FILENAME_LEN+1];
+			fgets(filename, MAX_SAVE_FILENAME_LEN, stdin);
+			*strchr(filename, '\n') = '\0';
+			FILE *fp = fopen(filename, "w+");
+			if (!fp) {
+				fprintf(stderr, "Error opening file %s.", filename);
+				exit(1);
+			}
+			saveGridToFile(fp, grid, width, height);
+			fclose(fp);
+		} else if (ch == 'q') {
+			printf("Goodbye!\n");
+			exit(0);
+		} else if (ch == EOF) exit(1);
+	}
+	
+	free(grid);
+}
+
 int main(int argc, char **argv) {
 	if (argc <= 1) {
-		fprintf(stderr, "Usage: termca <in-files...>\n");
-		return 2;
+		doEditor();
 	} else {
 		for (int i = 1; i < argc; ++i) {
 			char *name = argv[i];
