@@ -1,0 +1,4 @@
+STATE(EMPTY, '.', RGB( 48,  48,  48))
+STATE(HEAD,  '*', RGB(255, 255, 255))
+STATE(TAIL,  '+', 0x8df6fc)
+STATE(TRACE, 'O', 0xf9b30e)
