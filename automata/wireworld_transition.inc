@@ -12,7 +12,6 @@ TRANSITION_FUNCTION(oldGrid, newGrid, width, height, x, y) {
 		case HEAD:  SET(x, y, TAIL); break;
 		case TAIL:  SET(x, y, TRACE); break;
 		case TRACE: {
-			//printf("[headCount: %d :headCount]", headCount);
 			if (headCount == 1 || headCount == 2)
 				SET(x, y, HEAD);
 			else
