@@ -7,6 +7,8 @@ Cellular Automata on the terminal.
 Simulation and visualization of:
 * **Von Neumann cellular automaton**
 * John Conway's **Game of Life**
+* Brian Silverman's **Wireworld**
+* Brian Silverman's **Seeds**
 
 # Usage
 To select which automaton to simulate and visualize, edit [`states.h`](states.h) and [`transition.inc`](transition.inc) to `#include` the appropriate files from the [`automata`](autmata/) folder.
