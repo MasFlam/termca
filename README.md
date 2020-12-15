@@ -1,6 +1,8 @@
 # Term CA
 Cellular Automata on the terminal.
 
+![Game of Life example](https://masflam.com/static/termca-gol.gif)
+
 # Features
 Simulation and visualization of:
 * **Von Neumann cellular automaton**
