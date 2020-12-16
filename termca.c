@@ -44,7 +44,12 @@ static inline void displayGrid(State *grid, size_t width, size_t height) {
 		for (size_t x = 1; x < width-1; ++x) {
 			val = grid[y*width + x];
 			if (lastVal != val)
-				printf("\x1b[38;2;%d;%d;%dm", color[val] >> 16, color[val] >> 8, color[val]);
+				printf(
+					"\x1b[38;2;%d;%d;%dm",
+					(color[val] >> 16) & 0xff,
+					(color[val] >> 8) & 0xff,
+					color[val] & 0xff
+				);
 			putchar(symbol[val]);
 			lastVal = val;
 		}
@@ -93,15 +98,20 @@ static inline void visualize(FILE *infp) {
 		newClock = clock();
 		float frameTime = (float) (newClock - oldClock) / CLOCKS_PER_SEC * 1000;
 		printf(
-			"^C - stop    ^D - sonic    Enter - next" "\n"
+			"^C - stop    Enter - next    q - next file" "\n"
 			"frame number: %d" "\n"
 			"frame time: %.1fms" "\n",
 			frameNumber,
 			frameTime
 		);
-		getchar();
+		int ch = getchar();
+		if (ch == 'q')
+			goto fin;
+		else if (ch == EOF)
+			exit(1);
 	}
 	
+fin:
 	free(oldGrid);
 	free(newGrid);
 }
@@ -120,11 +130,11 @@ static inline void doEditor() {
 	size_t width, height;
 	
 	printf(
-		"\x1b[3J\x1b[;f" "\n"
+		"\x1b[3J\x1b[;f"
 		"Enter the grid width: "
 	);
 	scanf(" %zu", &width);
-	printf("\nEnter the grid height: ");
+	printf("Enter the grid height: ");
 	scanf(" %zu", &height);
 	width += 2;
 	height += 2;
@@ -137,7 +147,7 @@ static inline void doEditor() {
 		printf(
 			":x,y - change cell at (x,y) (0-based)" "\n"
 			".filename - save grid to filename (max %d characters)" "\n"
-			"q - quit (remember to save firt!)" "\n",
+			"q - quit (remember to save first!)" "\n",
 			MAX_SAVE_FILENAME_LEN
 		);
 		
@@ -149,9 +159,9 @@ static inline void doEditor() {
 			#define STATE(name, symbol, _) \
 				printf( \
 					"\x1b[38;2;%d;%d;%dm(%d, %c)\x1b[39m %s\n", \
-					color[name] >> 16, \
-					color[name] >> 8, \
-					color[name], \
+					(color[name] >> 16) & 0xff, \
+					(color[name] >> 8) & 0xff, \
+					color[name] & 0xff, \
 					name, symbol, \
 					#name \
 				);
