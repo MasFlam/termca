@@ -9,8 +9,14 @@ Simulation and visualization of:
 * John Conway's **Game of Life**
 * Brian Silverman's **Wireworld**
 * Brian Silverman's **Seeds**
+Grid editor for easier input creation.
 
 # Usage
+```
+$ make
+$ ./termca examples/gol-glider.txt
+$ ./termca
+```
 To select which automaton to simulate and visualize, edit [`states.h`](states.h) and [`transition.inc`](transition.inc) to `#include` the appropriate files from the [`automata`](autmata/) folder.
 Then (re)compile the executable with `make` and run it, giving it the input file(s) as command line argument(s). Example input can be found in [`examples`](examples/).
 
