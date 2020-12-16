@@ -9,6 +9,7 @@ Simulation and visualization of:
 * John Conway's **Game of Life**
 * Brian Silverman's **Wireworld**
 * Brian Silverman's **Seeds**
+
 Grid editor for easier input creation.
 
 # Usage
